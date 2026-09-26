@@ -62,9 +62,6 @@ namespace LucidCatsBestiary
         }
     }
 
-    /// <summary>
-    /// Keeps track of which monsters have been unlocked and saves them to a small text file.
-    /// </summary>
     internal static class BestiaryData
     {
         public static readonly string[] Monsters = BuildIdList();
@@ -137,7 +134,6 @@ namespace LucidCatsBestiary
             BestiaryPlugin.Log.LogInfo($"NEW MONSTER UNLOCKED: {id} ({UnlockedCount}/{Monsters.Length})");
         }
 
-        /// <summary>Turns "DreamEnemy_Flower Eye(Clone)" into "Flower Eye".</summary>
         public static string IdFromObjectName(string objectName)
         {
             const string prefix = "DreamEnemy_";
@@ -176,10 +172,6 @@ namespace LucidCatsBestiary
         }
     }
 
-    /// <summary>
-    /// The game calls DreamEnemy.TryPlayFirstSightFeedback on your own PC the moment
-    /// you lay eyes on a monster. We hook in right after it to unlock that monster.
-    /// </summary>
     [HarmonyPatch(typeof(DreamEnemy), nameof(DreamEnemy.TryPlayFirstSightFeedback))]
     internal static class SightPatch
     {
