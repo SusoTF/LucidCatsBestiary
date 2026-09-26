@@ -9,22 +9,15 @@ using Object = UnityEngine.Object;
 
 namespace LucidCatsBestiary
 {
-    /// <summary>
-    /// A tiny "photo studio" far below the main menu: it holds a visual-only copy of a monster,
-    /// spins it, and films it with its own camera into a transparent texture shown in the bestiary.
-    /// </summary>
     internal class MonsterViewer : MonoBehaviour
     {
-        // Layer only our camera looks at, and a spot nobody else can see.
         private const int ViewerLayer = 31;
         private static readonly Vector3 StagePosition = new Vector3(0f, -1000f, 0f);
 
-        // Scripts from the game that are safe to keep on the copy (purely cosmetic).
         private static readonly string[] KeptScripts = { "MMAutoRotate" };
 
         private static readonly Dictionary<string, GameObject> PrefabCache = new Dictionary<string, GameObject>();
 
-        // Global value used by the game's retro effect. Our camera must not change it for the menu.
         private static readonly int RetroPixelSizeId = Shader.PropertyToID("_RetroPixelSize");
         private int savedRetroPixelSize;
 
@@ -74,7 +67,6 @@ namespace LucidCatsBestiary
             cam.enabled = false;
             ConfigureUrpCamera(cam);
 
-            // Key light and fill light. They're placed around the model in FrameModel.
             lights.Add(CreateLight("Key Light"));
             lights.Add(CreateLight("Fill Light"));
 
@@ -116,8 +108,6 @@ namespace LucidCatsBestiary
                 if (data == null)
                     data = camera.gameObject.AddComponent<UniversalAdditionalCameraData>();
 
-                // No post-processing and no volumes: keeps the background transparent
-                // and skips the game's CRT screen effect for this camera.
                 data.renderPostProcessing = false;
                 data.volumeLayerMask = 0;
                 data.renderShadows = false;
@@ -129,14 +119,12 @@ namespace LucidCatsBestiary
             }
         }
 
-        /// <summary>Only film while the bestiary is open and a model is loaded.</summary>
         public void SetRendering(bool on)
         {
             if (cam != null)
                 cam.enabled = on && model != null;
         }
 
-        /// <summary>Shows the given monster. Returns false if its model could not be found.</summary>
         public bool Show(string prefabName)
         {
             if (prefabName == currentPrefab && model != null)
@@ -156,7 +144,6 @@ namespace LucidCatsBestiary
                 Transform visuals = prefab.transform.Find("Visuals");
                 GameObject source = visuals != null ? visuals.gameObject : prefab;
 
-                // Build the copy under an inactive holder so none of the game's scripts wake up.
                 var holder = new GameObject("Model Holder");
                 holder.SetActive(false);
                 holder.transform.SetParent(turntable, false);
@@ -171,8 +158,6 @@ namespace LucidCatsBestiary
                 turntable.localRotation = Quaternion.identity;
                 holder.SetActive(true);
 
-                // Put animated models in their animation pose right away, so we frame the pose
-                // you actually see and not the model's default pose.
                 foreach (Animator animator in holder.GetComponentsInChildren<Animator>())
                 {
                     try { animator.Update(0f); }
@@ -233,7 +218,6 @@ namespace LucidCatsBestiary
             {
                 if (flat)
                 {
-                    // Flat (2D) monsters just sway gently instead of spinning edge-on.
                     yaw = Mathf.Lerp(yaw, Mathf.Sin(Time.unscaledTime * 0.8f) * 15f, Time.unscaledDeltaTime * 2f);
                 }
                 else
@@ -270,7 +254,6 @@ namespace LucidCatsBestiary
 
             foreach (DreamEnemy enemy in Resources.FindObjectsOfTypeAll<DreamEnemy>())
             {
-                // Prefabs (assets) don't belong to any scene; live monsters do.
                 if (enemy != null && !enemy.gameObject.scene.IsValid() && enemy.name == prefabName)
                 {
                     PrefabCache[prefabName] = enemy.gameObject;
@@ -280,10 +263,8 @@ namespace LucidCatsBestiary
             return null;
         }
 
-        /// <summary>Removes everything that isn't needed to just look at the monster.</summary>
         private static void StripToVisuals(GameObject copy)
         {
-            // Game scripts (AI, sounds, feedbacks...). Several passes in case one depends on another.
             for (int pass = 0; pass < 3; pass++)
             {
                 MonoBehaviour[] scripts = copy.GetComponentsInChildren<MonoBehaviour>(true);
@@ -320,7 +301,6 @@ namespace LucidCatsBestiary
                 SetLayerRecursively(child.gameObject, layer);
         }
 
-        /// <summary>True for monsters made of 2D sprites (Eyes, Flower Eye).</summary>
         private static bool IsFlat(GameObject copy)
         {
             bool hasSprites = false;
@@ -336,7 +316,6 @@ namespace LucidCatsBestiary
             return hasSprites;
         }
 
-        /// <summary>Centers the model on the turntable and moves the camera so it fits.</summary>
         private void FrameModel(GameObject holder)
         {
             bool found = false;
@@ -362,7 +341,6 @@ namespace LucidCatsBestiary
             float radius = Mathf.Max(bounds.extents.magnitude, 0.1f);
             float distance = radius / Mathf.Sin(cam.fieldOfView * 0.5f * Mathf.Deg2Rad) * 1.05f;
 
-            // Monsters face +Z, so the camera stands in front of them looking back.
             cam.transform.position = turntable.position + new Vector3(0f, radius * 0.1f, distance);
             cam.transform.LookAt(turntable.position);
             cam.nearClipPlane = Mathf.Max(0.01f, distance - radius * 2f);
@@ -373,10 +351,6 @@ namespace LucidCatsBestiary
             PlaceLight(lights[1], new Vector3(-0.8f, 0.2f, 0.7f) * distance, 0.5f);
         }
 
-        /// <summary>
-        /// Bounds of a renderer. For animated (skinned) models the game only stores a rough box,
-        /// so we measure the real mesh in its current pose instead.
-        /// </summary>
         private Bounds MeasureBounds(Renderer renderer)
         {
             Bounds result = renderer.bounds;
@@ -399,7 +373,6 @@ namespace LucidCatsBestiary
                 for (int i = 1; i < vertices.Length; i++)
                     measured.Encapsulate(toWorld.MultiplyPoint3x4(vertices[i]));
 
-                // Sanity check against the renderer's own box before trusting the measurement.
                 float ratio = measured.size.magnitude / Mathf.Max(0.0001f, result.size.magnitude);
                 if (ratio > 0.2f && ratio < 2f)
                     result = measured;
@@ -417,12 +390,10 @@ namespace LucidCatsBestiary
             light.transform.position = turntable.position + offset;
             float d = offset.magnitude;
             light.range = d * 3f;
-            // Point lights fade with distance squared, so compensate to keep the same brightness at any size.
             light.intensity = BestiaryPlugin.ViewerLightIntensity.Value * relativeIntensity * d * d;
         }
     }
 
-    /// <summary>Lets you spin the model by dragging it with the mouse.</summary>
     internal class ViewerDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler
     {
         public MonsterViewer Viewer;
