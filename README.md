@@ -56,7 +56,7 @@ Delete the `BepInEx\plugins\LucidCatsBestiary` folder.
 
 To remove BepInEx completely, also delete `winhttp.dll`, `doorstop_config.ini` and the `BepInEx` folder from the game folder.
 
-## SOME COMMON QUESTIONS THAT CAME TO MY MIND
+## Some common questions that came to my mind
 
 **Does it work in multiplayer?**
 Yes. Everything happens on your own PC, so it doesn't affect anyone else, and your friends don't need to install it.
