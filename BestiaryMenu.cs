@@ -11,10 +11,6 @@ using Object = UnityEngine.Object;
 
 namespace LucidCatsBestiary
 {
-    /// <summary>
-    /// Adds the "Bestiary" button and panel to the main menu. Both are clones of the game's own
-    /// Stats button and panel, so they look and animate exactly like the rest of the menu.
-    /// </summary>
     internal class BestiaryMenu : MonoBehaviour
     {
         private sealed class Row
@@ -45,11 +41,9 @@ namespace LucidCatsBestiary
         private int hovered = -1;
         private Color tierTextBaseColor = Color.white;
 
-        // How much each row lights up: hovered a little, selected a lot more.
         private const float HoverTint = 0.15f;
         private const float SelectedTint = 0.3f;
 
-        /// <summary>Tier 1 yellow, tier 2 orange, tier 3 red.</summary>
         private static Color TierColor(int tier)
         {
             switch (tier)
@@ -86,7 +80,6 @@ namespace LucidCatsBestiary
             if (viewer != null)
                 viewer.SetRendering(open && viewerImage != null && viewerImage.enabled);
 
-            // Smoothly fade each row towards its colour (normal, hovered or selected).
             float blend = 1f - Mathf.Exp(-Time.unscaledDeltaTime * 20f);
             for (int i = 0; i < rows.Count; i++)
             {
@@ -95,10 +88,6 @@ namespace LucidCatsBestiary
                     background.color = Color.Lerp(background.color, RowColor(i), blend);
             }
         }
-
-        // ---------------------------------------------------------------------------------
-        // Building
-        // ---------------------------------------------------------------------------------
 
         private void Build()
         {
@@ -148,12 +137,10 @@ namespace LucidCatsBestiary
             if (click == null)
                 throw new Exception("Could not find the click event of the Bestiary button.");
 
-            // The copy still carries the Stats button's actions: switch them off and add ours.
             for (int i = 0; i < click.GetPersistentEventCount(); i++)
                 click.SetPersistentListenerState(i, UnityEventCallState.Off);
             click.AddListener(OnBestiaryClicked);
 
-            // Opening Stats or Settings closes the bestiary, just like they close each other.
             FindClickEvent(statsButton.gameObject)?.AddListener(CloseBestiary);
             if (settingsButton != null)
                 FindClickEvent(settingsButton.gameObject)?.AddListener(CloseBestiary);
@@ -161,7 +148,6 @@ namespace LucidCatsBestiary
 
         private void BuildPanel(Transform statsPanel)
         {
-            // Clone under an inactive holder so the Stats script never wakes up in the copy.
             var holder = new GameObject("Bestiary Holder");
             holder.SetActive(false);
 
@@ -183,7 +169,6 @@ namespace LucidCatsBestiary
             foreach (Transform child in grid)
                 oldChildren.Add(child.gameObject);
 
-            // ---- Left column: counter + list of monsters ----
             GameObject header = Instantiate(headerTemplate.gameObject, grid, false);
             header.name = "Counter";
             counterText = header.GetComponent<TMP_Text>();
@@ -198,7 +183,6 @@ namespace LucidCatsBestiary
             gridRect.offsetMin = gridOffsetMin;
             gridRect.offsetMax = gridOffsetMax;
 
-            // ---- Right column: 3D viewer + name + tier + description ----
             RectTransform details = NewRect("Details", panel.transform);
             details.anchorMin = new Vector2(0.45f, 0f);
             details.anchorMax = new Vector2(1f, 1f);
@@ -247,7 +231,6 @@ namespace LucidCatsBestiary
             foreach (GameObject old in oldChildren)
                 DestroyImmediate(old);
 
-            // Put the finished panel next to the Stats panel and let it wake up.
             panel.transform.SetParent(statsPanel.parent, false);
             panel.transform.SetSiblingIndex(statsPanel.GetSiblingIndex() + 1);
             Destroy(holder);
@@ -303,9 +286,6 @@ namespace LucidCatsBestiary
             return row;
         }
 
-        // ---------------------------------------------------------------------------------
-        // Behaviour
-        // ---------------------------------------------------------------------------------
 
         private void OnBestiaryClicked()
         {
@@ -380,7 +360,6 @@ namespace LucidCatsBestiary
             viewerImage.enabled = showModel;
         }
 
-        /// <summary>Snaps every row to its colour at once (used when the panel opens).</summary>
         private void UpdateRowHighlights()
         {
             for (int i = 0; i < rows.Count; i++)
@@ -407,9 +386,6 @@ namespace LucidCatsBestiary
                 Mathf.Max(c.a, minAlpha));
         }
 
-        // ---------------------------------------------------------------------------------
-        // Helpers
-        // ---------------------------------------------------------------------------------
 
         private static Transform Require(Transform parent, string path)
         {
@@ -447,7 +423,6 @@ namespace LucidCatsBestiary
             rect.offsetMax = Vector2.zero;
         }
 
-        /// <summary>Finds the game's menu panel component (HaniUtils.UI.Menu or a subclass).</summary>
         private static Component FindMenuComponent(GameObject go)
         {
             foreach (MonoBehaviour mb in go.GetComponents<MonoBehaviour>())
@@ -461,7 +436,6 @@ namespace LucidCatsBestiary
             return null;
         }
 
-        /// <summary>Finds the "onClick" event of the game's button script.</summary>
         private static UnityEvent FindClickEvent(GameObject go)
         {
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -479,7 +453,6 @@ namespace LucidCatsBestiary
             return null;
         }
 
-        /// <summary>Calls Open / Close / Toggle on a game menu panel.</summary>
         private static void CallMenu(Component menu, string methodName)
         {
             if (menu == null)
@@ -506,7 +479,6 @@ namespace LucidCatsBestiary
         }
     }
 
-    /// <summary>Tells the bestiary when the mouse enters or leaves a row of the list.</summary>
     internal class RowHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         public Action Entered;
