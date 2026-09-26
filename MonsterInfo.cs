@@ -1,8 +1,5 @@
 namespace LucidCatsBestiary
 {
-    /// <summary>
-    /// Everything the bestiary shows about each monster, in bestiary order.
-    /// </summary>
     internal sealed class MonsterInfo
     {
         public readonly string Id;
@@ -18,7 +15,6 @@ namespace LucidCatsBestiary
             Description = description;
         }
 
-        /// <summary>Name of the monster's prefab inside the game.</summary>
         public string PrefabName => "DreamEnemy_" + Id;
 
         public static readonly MonsterInfo[] All =
