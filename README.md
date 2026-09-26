@@ -2,7 +2,7 @@
 
 An in-game bestiary for **Lucid Cats**. It adds a **Bestiary** button to the main menu where you can browse every monster you've encountered, with a rotating 3D model, its tier and a short description.
 
-https://github.com/user-attachments/assets/cc8852db-c90b-4ce3-878b-0c0f4df95545
+<img width="1280" height="720" alt="Bestiary-Trim" src="https://github.com/user-attachments/assets/14c357ed-9965-4f3a-a1e1-137561d13d4d" />
 
 ## Features
 
