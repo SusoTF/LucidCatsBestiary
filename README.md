@@ -2,8 +2,7 @@
 
 An in-game bestiary for **Lucid Cats**. It adds a **Bestiary** button to the main menu where you can browse every monster you've encountered, with a rotating 3D model, its tier and a short description.
 
-<!-- Arrastra aquí tu captura o GIF del bestiario (en el editor de GitHub se sube sola) -->
-![Bestiary](PON_AQUI_TU_CAPTURA)
+https://github.com/user-attachments/assets/cc8852db-c90b-4ce3-878b-0c0f4df95545
 
 ## Features
 
