@@ -4,6 +4,8 @@ An in-game bestiary for **Lucid Cats**. It adds a **Bestiary** button to the mai
 
 <img width="1280" height="720" alt="Bestiary-Trim" src="https://github.com/user-attachments/assets/14c357ed-9965-4f3a-a1e1-137561d13d4d" />
 
+<img width="1920" height="1080" alt="20260926023843_1" src="https://github.com/user-attachments/assets/4a4da85e-c679-41f5-bd44-aac4dcd966ac" />
+
 ## Features
 
 - New **Bestiary** button in the main menu, right below Stats, matching the game's own style, animations and sounds.
