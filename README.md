@@ -82,6 +82,12 @@ Not yet. The bestiary currently covers the 8 monsters in the base game.
 ### 1.0.0
 - First release.
 
+### 1.0.1
+- Opening the bestiary now closes any other menu panel, including ones added by other mods (and vice versa).
+
+### 1.0.2
+- Spin speed and light intensity now have limits (0–120 and 0–5), so mod managers can show them as sliders.
+
 ## License
 
 [MIT](LICENSE).
