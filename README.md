@@ -88,6 +88,9 @@ Not yet. The bestiary currently covers the 8 monsters in the base game.
 ### 1.0.2
 - Spin speed and light intensity now have limits (0–120 and 0–5), so mod managers can show them as sliders.
 
+### 1.0.3
+- The mod's description and author are now included in its file, so mod managers can show them.
+
 ## License
 
 [MIT](LICENSE).
